@@ -3,14 +3,26 @@ const app = express();
 var cors = require("cors");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
+const Organisation = require("./models/organisations");
+const User = require("./models/users");
+const Relations = require("./models/relations");
 const authRoutes = require("./routes/authRoutes");
 // connect db here
-
+const db = require("./config/dbConfig");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cors());
+//db connections
+db.authenticate().then(async () => {
+	await db.sync();
+});
 
+// Foreign keys of DB
+User.hasMany(Relations, { onDelete: "cascade", foreignKey: "user_id" });
+Organisation.hasMany(Relations, { onDelete: "cascade", foreignKey: "org_id" });
+Relations.belongsTo(User, { foreignKey: "user_id" });
+Relations.belongsTo(Organisation, { foreignKey: "org_id" });
 app.use(
 	cookieSession({
 		name: "authy-session",
