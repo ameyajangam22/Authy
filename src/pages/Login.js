@@ -1,6 +1,9 @@
+import Navbar from "../components/Navbar";
+
 const Login = () => {
 	return (
 		<>
+			<Navbar />
 			<div className="mt-4 grid grid-cols-1  justify-center items-center gap-10">
 				<div className="col-span-1  justify-center flex">
 					<h1 className="text-4xl font-bold">Login</h1>

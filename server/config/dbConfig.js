@@ -3,7 +3,7 @@ const Sequelize = require("sequelize");
 module.exports = new Sequelize("authy", "root", "Ameya@2001", {
 	host: "localhost",
 	dialect: "mysql",
-	logging: true, // translates to mysql query
+	logging: false, // translates to mysql query
 
 	pool: {
 		max: 5,

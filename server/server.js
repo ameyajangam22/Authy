@@ -7,6 +7,7 @@ const Organisation = require("./models/organisations");
 const User = require("./models/users");
 const Relations = require("./models/relations");
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 // connect db here
 const db = require("./config/dbConfig");
 app.use(express.json());
@@ -39,6 +40,7 @@ require("./config/authConfig")(passport);
 require("./config/authConfigFB")(passport);
 // GOOGLE AND FB ROUTES
 app.use(authRoutes);
+app.use(userRoutes);
 app.listen(8000, () => {
 	console.log("Server up and running");
 });

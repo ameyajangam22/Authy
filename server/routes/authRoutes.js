@@ -14,7 +14,7 @@ router.get(
 	function (req, res) {
 		// Successful authentication, redirect home.
 		console.log("req.user [success]", req.user);
-		res.send("ok");
+		res.redirect("http://localhost:3000/main");
 	}
 );
 
@@ -25,12 +25,12 @@ router.get(
 router.get(
 	"/facebook/callback",
 	passport.authenticate("facebook", {
-		failureRedirect: "https://localhost:3000/bad",
+		failureRedirect: "http://localhost:3000/bad",
 	}),
 	function (req, res) {
 		// Successful authentication, redirect home.
 		console.log("req.user [success]", req.user);
-		res.send("ok");
+		res.redirect("http://localhost:3000/main");
 	}
 );
 
