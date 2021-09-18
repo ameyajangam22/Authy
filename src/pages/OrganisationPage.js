@@ -12,6 +12,19 @@ const OrganisationPage = () => {
 	const [isAdmin, setIsAdmin] = useState(false);
 	const [updateUserList, setUpdateUserList] = useState(false);
 	const params = useParams();
+
+	const handleMakeAdmin = async (userId) => {
+		const response = await fetch(`/makeAdmin/${userId}/${params.orgId}`, {
+			method: "PATCH",
+		});
+		setUpdateUserList(!updateUserList);
+	};
+	const handleRemoveAdmin = async (userId) => {
+		const response = await fetch(`/removeAdmin/${userId}/${params.orgId}`, {
+			method: "PATCH",
+		});
+		setUpdateUserList(!updateUserList);
+	};
 	useEffect(async () => {
 		const response = await fetch("/me");
 		const data = await response.json();
@@ -65,16 +78,46 @@ const OrganisationPage = () => {
 						{orgUsers.map((user) => {
 							return (
 								<>
-									<div className="p-4 flex items-center ">
-										<h1>{user.userName}</h1>
+									<div className="p-4  grid grid-cols-3 flex items-center ">
+										<h1 className="col-span-1">{user.userName}</h1>
 										{user.relations[0].isAdmin ? (
-											<div className="bg-purple-600 ml-auto px-2 py-1 text-white">
-												Admin
-											</div>
+											isAdmin && user.id != userId ? (
+												<>
+													<div
+														onClick={() => {
+															handleRemoveAdmin(user.id);
+														}}
+														className="cursor-pointer transition ease-in-out duration-300 hover:bg-red-700 bg-red-600 col-span-1 ml-auto px-2 py-1 text-white"
+													>
+														Dismiss
+													</div>
+													<div className="bg-purple-600 col-span-1 ml-auto px-2 py-1 text-white">
+														Admin
+													</div>
+												</>
+											) : (
+												<div className="bg-purple-600 col-span-2 ml-auto px-2 py-1 text-white">
+													Admin
+												</div>
+											)
 										) : (
-											<div className="bg-blue-500 ml-auto px-2 py-1 text-white">
-												Reader
-											</div>
+											<>
+												{isAdmin ? (
+													<div
+														onClick={() => {
+															handleMakeAdmin(user.id);
+														}}
+														className="col-span-1 text-sm text-center bg-yellow-400 text-white px-1 py-1 pb-2 cursor-pointer hover:bg-yellow-500 transition ease-in-out duration-300"
+													>
+														Make Admin
+													</div>
+												) : (
+													<div className="col-span-1"></div>
+												)}
+												<div className="col-span-1 bg-blue-500 ml-auto px-2 py-1 text-white">
+													Reader
+												</div>
+											</>
 										)}
 									</div>
 								</>

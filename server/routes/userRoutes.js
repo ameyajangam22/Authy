@@ -99,8 +99,36 @@ router.get("/getUserList/:orgId", async (req, res) => {
 				attributes: ["isAdmin"],
 			},
 		],
-		attributes: ["userName"],
+		attributes: ["userName", "id"],
 	});
 	res.json(userList);
+});
+router.patch("/makeAdmin/:userId/:orgId", async (req, res) => {
+	const userId = req.params.userId;
+	const orgId = req.params.orgId;
+	const updateRelation = await Relation.update(
+		{ isAdmin: true },
+		{
+			where: {
+				user_id: userId,
+				org_id: orgId,
+			},
+		}
+	);
+	res.json(updateRelation);
+});
+router.patch("/removeAdmin/:userId/:orgId", async (req, res) => {
+	const userId = req.params.userId;
+	const orgId = req.params.orgId;
+	const updateRelation = await Relation.update(
+		{ isAdmin: false },
+		{
+			where: {
+				user_id: userId,
+				org_id: orgId,
+			},
+		}
+	);
+	res.json(updateRelation);
 });
 module.exports = router;
