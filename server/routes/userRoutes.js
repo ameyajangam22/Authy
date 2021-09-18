@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const User = require("../models/users");
 const Organisation = require("../models/organisations");
 const Relation = require("../models/relations");
 router.get("/me", (req, res) => {
@@ -43,5 +44,35 @@ router.get("/getOrganisations/:id", async (req, res) => {
 	});
 	res.json(organisations);
 });
+router.get("/getOrganisation/:id", async (req, res) => {
+	const id = req.params.id;
+	let organisation = await Organisation.findOne({
+		include: [
+			{
+				model: Relation,
+				where: {
+					org_id: id,
+				},
+				attributes: ["isAdmin", "user_id"],
+			},
+		],
+	});
+	res.json(organisation);
+});
+router.get("/checkIsAdmin/:userId/:orgId", async (req, res) => {
+	const userId = req.params.userId;
+	const orgId = req.params.orgId;
 
+	let isAdmin = await Relation.findOne({
+		where: { user_id: userId, org_id: orgId },
+		attributes: ["isAdmin"],
+	});
+	res.json(isAdmin);
+});
+router.get("/getUsers", async (req, res) => {
+	let users = await User.findAll({
+		attributes: ["id", "userName", "email"],
+	});
+	res.json(users);
+});
 module.exports = router;

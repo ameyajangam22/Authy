@@ -96,7 +96,7 @@ const Main = () => {
 				</div>
 			</div>
 			<div id="orgArea" className="mt-10 flex flex-col m-auto w-4/5 gap-10">
-				{organisations.length &&
+				{organisations.length > 0 &&
 					organisations.map((org) => {
 						return (
 							<>
