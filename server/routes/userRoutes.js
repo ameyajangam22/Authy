@@ -131,4 +131,15 @@ router.patch("/removeAdmin/:userId/:orgId", async (req, res) => {
 	);
 	res.json(updateRelation);
 });
+router.delete("/deleteUser/:userId/:orgId", async (req, res) => {
+	const userId = req.params.userId;
+	const orgId = req.params.orgId;
+	await Relation.destroy({
+		where: {
+			user_id: userId,
+			org_id: orgId,
+		},
+	});
+	res.send("ok");
+});
 module.exports = router;
