@@ -35,6 +35,23 @@ const Main = () => {
 			setOrgName(value);
 		}
 	};
+	const handleSortByDate = async () => {
+		setOrganisations((org) => [
+			...org.sort((a, b) => {
+				return a.relations[0].createdAt < b.relations[0].createdAt ? 1 : -1;
+			}),
+		]);
+	};
+	const handleSortByName = async () => {
+		// let data = organisations;
+		// data = await data.sort();
+		setOrganisations((org) => [
+			...org.sort((a, b) => {
+				return a.orgName < b.orgName ? -1 : 1;
+			}),
+		]);
+		// setOrgUpdate(!orgUpdate);
+	};
 	useEffect(async () => {
 		const response = await fetch("/me");
 		const data = await response.json();
@@ -65,10 +82,16 @@ const Main = () => {
 				>
 					Create New Organisation
 				</div>
-				<div className="p-2 col-span-2 bg-blue-100 font-medium hover:bg-blue-200 transition ease-in-out duration-300 text-center cursor-pointer">
+				<div
+					onClick={handleSortByDate}
+					className="p-2 col-span-2 bg-blue-100 font-medium hover:bg-blue-200 transition ease-in-out duration-300 text-center cursor-pointer"
+				>
 					Sort By Date
 				</div>
-				<div className="p-2 col-span-2 bg-blue-100 font-medium hover:bg-blue-200 transition ease-in-out duration-300 text-center cursor-pointer">
+				<div
+					onClick={handleSortByName}
+					className="p-2 col-span-2 bg-blue-100 font-medium hover:bg-blue-200 transition ease-in-out duration-300 text-center cursor-pointer"
+				>
 					Sort By Name
 				</div>
 			</div>
