@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require("../models/users");
 const Organisation = require("../models/organisations");
 const Relation = require("../models/relations");
+const { route } = require("./authRoutes");
 router.get("/me", (req, res) => {
 	if (req.user) {
 		res.json(req.user);
@@ -74,5 +75,32 @@ router.get("/getUsers", async (req, res) => {
 		attributes: ["id", "userName", "email"],
 	});
 	res.json(users);
+});
+router.post("/addUser/:userId/:orgId", async (req, res) => {
+	const userId = req.params.userId;
+	const orgId = req.params.orgId;
+
+	const newRelation = await Relation.create({
+		user_id: userId,
+		org_id: orgId,
+		isAdmin: false,
+	});
+	res.json(newRelation);
+});
+router.get("/getUserList/:orgId", async (req, res) => {
+	const orgId = req.params.orgId;
+	const userList = await User.findAll({
+		include: [
+			{
+				model: Relation,
+				where: {
+					org_id: orgId,
+				},
+				attributes: ["isAdmin"],
+			},
+		],
+		attributes: ["userName"],
+	});
+	res.json(userList);
 });
 module.exports = router;

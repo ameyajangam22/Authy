@@ -10,6 +10,7 @@ const OrganisationPage = () => {
 	const [orgInfo, setOrgInfo] = useState("");
 	const [orgUsers, setOrgUsers] = useState([]);
 	const [isAdmin, setIsAdmin] = useState(false);
+	const [updateUserList, setUpdateUserList] = useState(false);
 	const params = useParams();
 	useEffect(async () => {
 		const response = await fetch("/me");
@@ -26,26 +27,61 @@ const OrganisationPage = () => {
 		const data2 = await response2.json();
 		console.log("data2", data2);
 		setOrgInfo(data2.orgInfo);
-
 		// check user Role
 		const response3 = await fetch(`/checkIsAdmin/${data.id}/${params.orgId}`);
 		const data3 = await response3.json();
 		setIsAdmin(data3.isAdmin);
 	}, []);
+	useEffect(async () => {
+		// get User List
+		const response4 = await fetch(`/getUserList/${params.orgId}`);
+		const data4 = await response4.json();
+		setOrgUsers(data4);
+	}, [updateUserList]);
 	return (
 		<>
 			<Navbar userName={userName} />
 
 			<div className="grid grid-cols-10 ">
 				<div className=" top-2 col-span-8 border-r-2">
-					{isAdmin && <SearchBar orgId={params.orgId} userId={userId} />}
+					{isAdmin && (
+						<SearchBar
+							updateUserListFunc={() => {
+								setUpdateUserList(!updateUserList);
+							}}
+							orgId={params.orgId}
+							userId={userId}
+						/>
+					)}
 					<h2 className="font-medium text-3xl flex justify-center">
 						Organisation Info
 					</h2>
 					<p className="mr-auto">{orgInfo}</p>
 					{/* <p>isAdmin {isAdmin == true ? "true" : "false"}</p> */}
 				</div>
-				<div className="col-span-2 overflow-auto">User List</div>
+				<div className="col-span-2 overflow-auto">
+					User List
+					<div className="flex flex-col divide-y-2">
+						{orgUsers.map((user) => {
+							return (
+								<>
+									<div className="p-4 flex items-center ">
+										<h1>{user.userName}</h1>
+										{user.relations[0].isAdmin ? (
+											<div className="bg-purple-600 ml-auto px-2 py-1 text-white">
+												Admin
+											</div>
+										) : (
+											<div className="bg-blue-500 ml-auto px-2 py-1 text-white">
+												Reader
+											</div>
+										)}
+									</div>
+								</>
+							);
+						})}
+					</div>
+				</div>
 			</div>
 		</>
 	);
