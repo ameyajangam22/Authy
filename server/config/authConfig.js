@@ -1,4 +1,5 @@
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const User = require("../models/users");
 module.exports = (passport) => {
 	passport.serializeUser(function (user, cb) {
 		/*
@@ -33,8 +34,27 @@ module.exports = (passport) => {
      If not create the user and then select him and pass to callback
     */
 
-				console.log("This is your profile", profile);
-				cb(null, profile);
+				User.findOne({
+					where: {
+						providerId: profile.id,
+					},
+				}).then(async (result) => {
+					console.log("SEQUELIZE RES", result);
+					if (result && !result.isNewRecord) {
+						console.log("This is an existing user via Google");
+
+						cb(null, result.dataValues);
+					} else {
+						const newUser = await User.create({
+							userName: profile.displayName,
+							email: profile.emails[0].value,
+							providerId: profile.id,
+						});
+						// console.log("This is your profile", profile);
+						console.log("This is a new user via Google");
+						cb(null, newUser);
+					}
+				});
 			}
 		)
 	);

@@ -24,6 +24,7 @@ User.hasMany(Relations, { onDelete: "cascade", foreignKey: "user_id" });
 Organisation.hasMany(Relations, { onDelete: "cascade", foreignKey: "org_id" });
 Relations.belongsTo(User, { foreignKey: "user_id" });
 Relations.belongsTo(Organisation, { foreignKey: "org_id" });
+
 app.use(
 	cookieSession({
 		name: "authy-session",

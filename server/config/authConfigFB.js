@@ -1,4 +1,5 @@
 const FacebookStrategy = require("passport-facebook").Strategy;
+const User = require("../models/users");
 module.exports = (passport) => {
 	passport.serializeUser(function (user, cb) {
 		/*
@@ -24,6 +25,7 @@ module.exports = (passport) => {
 				clientID: "231878395575706",
 				clientSecret: "72ceb7fa2b3ec6df7ae1881fe1b864e6",
 				callbackURL: "http://localhost:8000/facebook/callback",
+				profileFields: ["id", "emails", "displayName"],
 			},
 			function (accessToken, refreshToken, profile, cb) {
 				/*
@@ -31,9 +33,25 @@ module.exports = (passport) => {
      If yes select the user and pass him to the done callback
      If not create the user and then select him and pass to callback
     */
-
-				console.log("This is your profile", profile);
-				cb(null, profile);
+				User.findOne({
+					where: {
+						providerId: profile.id,
+					},
+				}).then(async (result) => {
+					console.log("SEQUELIZE RES", result);
+					if (result && !result.isNewRecord) {
+						console.log("This is an existing user via Fb");
+						cb(null, result.dataValues);
+					} else {
+						const newUser = await User.create({
+							userName: profile.displayName,
+							email: profile.emails[0].value,
+							providerId: profile.id,
+						});
+						console.log("This is a new user via Facebook");
+						cb(null, newUser);
+					}
+				});
 			}
 		)
 	);

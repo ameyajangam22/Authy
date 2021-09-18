@@ -4,7 +4,9 @@ const router = express.Router();
 
 router.get(
 	"/google",
-	passport.authenticate("google", { scope: ["profile", "email"] })
+	passport.authenticate("google", {
+		scope: ["profile", "email"],
+	})
 );
 router.get(
 	"/google/callback",
@@ -20,7 +22,7 @@ router.get(
 
 router.get(
 	"/facebook",
-	passport.authenticate("facebook", { scope: ["user_friends"] })
+	passport.authenticate("facebook", { scope: ["email", "user_friends"] })
 );
 router.get(
 	"/facebook/callback",
@@ -29,7 +31,7 @@ router.get(
 	}),
 	function (req, res) {
 		// Successful authentication, redirect home.
-		console.log("req.user [success]", req.user);
+		// console.log("req.user [success]", req.user);
 		res.redirect("http://localhost:3000/main");
 	}
 );

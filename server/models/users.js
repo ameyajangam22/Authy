@@ -14,6 +14,9 @@ const user = {
 	email: {
 		type: Sequelize.STRING(200),
 	},
+	providerId: {
+		type: Sequelize.STRING(200),
+	},
 };
 
 module.exports = db.define("user", user);
