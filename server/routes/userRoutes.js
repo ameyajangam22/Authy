@@ -3,15 +3,19 @@ const router = express.Router();
 const User = require("../models/users");
 const Organisation = require("../models/organisations");
 const Relation = require("../models/relations");
-const { route } = require("./authRoutes");
+
+const isUserAdmin = (req, res, next) => {
+	console.log("hello");
+	next();
+};
 router.get("/me", (req, res) => {
 	if (req.user) {
 		res.json(req.user);
 	} else {
-		res.json({});
+		res.json({ message: "unauthorized" });
 	}
 });
-router.post("/addOrganisation/:id", async (req, res) => {
+router.post("/addOrganisation/:id", isUserAdmin, async (req, res) => {
 	const id = req.params.id;
 	const orgName = req.body.orgName;
 	const orgInfo = req.body.orgInfo;

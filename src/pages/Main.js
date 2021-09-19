@@ -43,19 +43,16 @@ const Main = () => {
 		]);
 	};
 	const handleSortByName = async () => {
-		// let data = organisations;
-		// data = await data.sort();
 		setOrganisations((org) => [
 			...org.sort((a, b) => {
 				return a.orgName < b.orgName ? -1 : 1;
 			}),
 		]);
-		// setOrgUpdate(!orgUpdate);
 	};
 	useEffect(async () => {
 		const response = await fetch("/me");
 		const data = await response.json();
-		if (!data) {
+		if (data.userName == null && data.message == "unauthorized") {
 			history.replace("/");
 		}
 		console.log("DAATTA", data);

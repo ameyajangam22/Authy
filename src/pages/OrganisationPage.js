@@ -34,7 +34,7 @@ const OrganisationPage = () => {
 	useEffect(async () => {
 		const response = await fetch("/me");
 		const data = await response.json();
-		if (!data) {
+		if (data.userName == null && data.message == "unauthorized") {
 			history.replace("/");
 		}
 		console.log("DAATTA", data);
