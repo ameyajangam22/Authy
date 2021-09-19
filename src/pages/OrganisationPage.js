@@ -9,15 +9,25 @@ const OrganisationPage = () => {
 	const [userId, setUserId] = useState("");
 	const [userName, setUserName] = useState("");
 	const [orgInfo, setOrgInfo] = useState("");
+	const [orgName, setOrgName] = useState("");
 	const [orgUsers, setOrgUsers] = useState([]);
 	const [isAdmin, setIsAdmin] = useState(false);
 	const [updateUserList, setUpdateUserList] = useState(false);
 	const params = useParams();
 
-	const handleMakeAdmin = async (userId) => {
-		const response = await fetch(`/makeAdmin/${userId}/${params.orgId}`, {
-			method: "PATCH",
-		});
+	const handleMakeAdmin = async (userIdToMakeAdmin) => {
+		const response = await fetch(
+			`/makeAdmin/${userIdToMakeAdmin}/${params.orgId}`,
+			{
+				method: "PATCH",
+				body: JSON.stringify({
+					yourId: userId,
+				}),
+				headers: {
+					"content-type": "application/json",
+				},
+			}
+		);
 		if (response.message == null) {
 			toast.success("Granted admin rights");
 		} else {
@@ -25,10 +35,19 @@ const OrganisationPage = () => {
 		}
 		setUpdateUserList(!updateUserList);
 	};
-	const handleRemoveAdmin = async (userId) => {
-		const response = await fetch(`/removeAdmin/${userId}/${params.orgId}`, {
-			method: "PATCH",
-		});
+	const handleRemoveAdmin = async (userIdToRemoveAdmin) => {
+		const response = await fetch(
+			`/removeAdmin/${userIdToRemoveAdmin}/${params.orgId}`,
+			{
+				method: "PATCH",
+				body: JSON.stringify({
+					yourId: userId,
+				}),
+				headers: {
+					"content-type": "application/json",
+				},
+			}
+		);
 		if (response.message == null) {
 			toast.success("Dismissed Admin");
 		} else {
@@ -36,10 +55,19 @@ const OrganisationPage = () => {
 		}
 		setUpdateUserList(!updateUserList);
 	};
-	const handleDeleteUser = async (userId) => {
-		const response = await fetch(`/deleteUser/${userId}/${params.orgId}`, {
-			method: "DELETE",
-		});
+	const handleDeleteUser = async (userIdToDelete) => {
+		const response = await fetch(
+			`/deleteUser/${userIdToDelete}/${params.orgId}`,
+			{
+				method: "DELETE",
+				body: JSON.stringify({
+					yourId: userId,
+				}),
+				headers: {
+					"content-type": "application/json",
+				},
+			}
+		);
 		if (response.message == null) {
 			toast.success("User kicked successfully");
 		} else {
@@ -62,6 +90,7 @@ const OrganisationPage = () => {
 		const data2 = await response2.json();
 		console.log("data2", data2);
 		setOrgInfo(data2.orgInfo);
+		setOrgName(data2.orgName);
 		// check user Role
 		const response3 = await fetch(`/checkIsAdmin/${data.id}/${params.orgId}`);
 		const data3 = await response3.json();
@@ -76,7 +105,7 @@ const OrganisationPage = () => {
 	return (
 		<>
 			<Navbar userName={userName} />
-
+			<h2 className="font-medium text-3xl flex justify-center">{orgName}</h2>
 			<div className="grid grid-cols-10 ">
 				<div className=" top-2 col-span-8 border-r-2">
 					{isAdmin && (
@@ -89,6 +118,7 @@ const OrganisationPage = () => {
 							userId={userId}
 						/>
 					)}
+
 					<h2 className="font-medium text-3xl flex justify-center">
 						Organisation Info
 					</h2>

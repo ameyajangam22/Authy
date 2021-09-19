@@ -18,7 +18,7 @@ const SearchBar = (props) => {
 		const response = await fetch(`/addUser/${userAddId}/${props.orgId}`, {
 			method: "POST",
 			body: JSON.stringify({
-				userId: props.userId,
+				yourId: props.userId,
 			}),
 			headers: {
 				"content-type": "application/json",
