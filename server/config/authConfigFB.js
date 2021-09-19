@@ -1,5 +1,7 @@
 const FacebookStrategy = require("passport-facebook").Strategy;
 const User = require("../models/users");
+const dotenv = require("dotenv");
+dotenv.config();
 module.exports = (passport) => {
 	passport.serializeUser(function (user, cb) {
 		/*
@@ -22,8 +24,8 @@ module.exports = (passport) => {
 	passport.use(
 		new FacebookStrategy(
 			{
-				clientID: "231878395575706",
-				clientSecret: "72ceb7fa2b3ec6df7ae1881fe1b864e6",
+				clientID: process.env.FACEBOOK_CLIENT_ID,
+				clientSecret: process.env.FACEBOOK_SECRET_ID,
 				callbackURL: "http://localhost:8000/facebook/callback",
 				profileFields: ["id", "emails", "displayName"],
 			},

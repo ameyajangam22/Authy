@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize");
-
-module.exports = new Sequelize("authy", "root", "Ameya@2001", {
+const dotenv = require("dotenv");
+dotenv.config();
+module.exports = new Sequelize("authy", "root", process.env.DB_PASSWORD, {
 	host: "localhost",
 	dialect: "mysql",
 	logging: false, // translates to mysql query
