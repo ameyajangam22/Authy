@@ -2,9 +2,9 @@ const Navbar = (props) => {
 	return (
 		<>
 			<div className="bg-gray-800 flex items-center p-4">
-				<div className="text-3xl text-white mr-auto">
+				<a href="/main" className="cursor-pointer text-3xl text-white mr-auto">
 					<h2 className="font-bold uppercase ">Authy</h2>
-				</div>
+				</a>
 				{props.userName ? (
 					<div>
 						<a
