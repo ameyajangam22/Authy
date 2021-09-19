@@ -5,6 +5,8 @@ const SearchBar = (props) => {
 	const [users, setUsers] = useState([]);
 	const [searches, setSearches] = useState([]);
 	const [userAddId, setUserAddId] = useState("");
+	const [searchUpdate, setSearchUpdate] = useState(false);
+	const box = document.getElementById("searchForUsers");
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		if (name == "searchInput") {
@@ -15,9 +17,17 @@ const SearchBar = (props) => {
 	const handleAddUser = async (e) => {
 		const response = await fetch(`/addUser/${userAddId}/${props.orgId}`, {
 			method: "POST",
+			body: JSON.stringify({
+				userId: props.userId,
+			}),
+			headers: {
+				"content-type": "application/json",
+			},
 		});
 		const data = await response.json();
-		setSearches("");
+		setSearches([]);
+		setSearchInput("");
+		setSearchUpdate(false);
 		props.updateUserListFunc();
 	};
 	useEffect(async () => {
@@ -25,13 +35,28 @@ const SearchBar = (props) => {
 		const data = await response.json();
 		setUsers(data);
 	}, []);
+	const notInList = (user_id) => {
+		let flag = true;
+		props.orgUsers.map((orgUser) => {
+			if (user_id == orgUser.id) {
+				console.log("orgUser", orgUser.userName);
+				flag = false;
+			}
+		});
+		return flag;
+	};
+
 	useEffect(() => {
+		if (searchUpdate == true) return;
 		let matches = users.filter((user) => {
 			// const regex = new RegExp(`^${searchInput}`, "gi");
 			let stringToCheck = user.userName;
 			let inp = searchInput.toLowerCase();
-			if (stringToCheck.toLowerCase().includes(inp) && user.id !== props.userId)
+			if (stringToCheck.toLowerCase().includes(inp) && notInList(user.id)) {
+				console.log("user", user.userName, notInList(user.id));
 				return true;
+			}
+
 			return false;
 		});
 		setSearches(matches);
@@ -46,7 +71,7 @@ const SearchBar = (props) => {
 				<input
 					className="rounded-l-md w-full px-6 py-2 text-gray-700 leading-tight 
                     focus:outline-none"
-					id="search for users"
+					id="searchForUsers"
 					type="text"
 					name="searchInput"
 					value={searchInput}
@@ -69,6 +94,7 @@ const SearchBar = (props) => {
 									onClick={() => {
 										setSearchInput(search.userName);
 										setSearches([]);
+										setSearchUpdate(true);
 										setUserAddId(search.id);
 									}}
 									className="p-2 flex cursor-pointer flex-col  gap-1  w-full hover:bg-gray-100 transition ease-in-out duration-300"

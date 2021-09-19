@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import SearchBar from "../components/SearchBar";
+import { toast } from "react-toastify";
 
 const OrganisationPage = () => {
 	const history = useHistory();
@@ -17,18 +18,33 @@ const OrganisationPage = () => {
 		const response = await fetch(`/makeAdmin/${userId}/${params.orgId}`, {
 			method: "PATCH",
 		});
+		if (response.message == null) {
+			toast.success("Granted admin rights");
+		} else {
+			toast.error("Illegal request");
+		}
 		setUpdateUserList(!updateUserList);
 	};
 	const handleRemoveAdmin = async (userId) => {
 		const response = await fetch(`/removeAdmin/${userId}/${params.orgId}`, {
 			method: "PATCH",
 		});
+		if (response.message == null) {
+			toast.success("Dismissed Admin");
+		} else {
+			toast.error("Illegal request");
+		}
 		setUpdateUserList(!updateUserList);
 	};
 	const handleDeleteUser = async (userId) => {
 		const response = await fetch(`/deleteUser/${userId}/${params.orgId}`, {
 			method: "DELETE",
 		});
+		if (response.message == null) {
+			toast.success("User kicked successfully");
+		} else {
+			toast.error("Illegal request");
+		}
 		setUpdateUserList(!updateUserList);
 	};
 	useEffect(async () => {
@@ -65,6 +81,7 @@ const OrganisationPage = () => {
 				<div className=" top-2 col-span-8 border-r-2">
 					{isAdmin && (
 						<SearchBar
+							orgUsers={orgUsers}
 							updateUserListFunc={() => {
 								setUpdateUserList(!updateUserList);
 							}}

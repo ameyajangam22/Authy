@@ -4,18 +4,33 @@ const User = require("../models/users");
 const Organisation = require("../models/organisations");
 const Relation = require("../models/relations");
 
-const isUserAdmin = (req, res, next) => {
-	console.log("hello");
-	next();
+const isUserAdmin = async (req, res, next) => {
+	const yourId = req.body.userId;
+	const orgId = req.params.orgId;
+	const check = await Relation.findOne({
+		where: {
+			user_id: yourId,
+			org_id: orgId,
+		},
+	});
+	console.log("userId", yourId);
+	console.log("orgId", orgId);
+	console.log("CCHECK", check);
+
+	if (check.isAdmin) next();
+	else {
+		console.log("Tu idhar kyu nahi hai");
+		res.status(401).json({ message: "Not Authorised" });
+	}
 };
 router.get("/me", (req, res) => {
 	if (req.user) {
 		res.json(req.user);
 	} else {
-		res.json({ message: "unauthorized" });
+		res.status(401).json({ message: "unauthorized" });
 	}
 });
-router.post("/addOrganisation/:id", isUserAdmin, async (req, res) => {
+router.post("/addOrganisation/:id", async (req, res) => {
 	const id = req.params.id;
 	const orgName = req.body.orgName;
 	const orgInfo = req.body.orgInfo;
@@ -50,7 +65,7 @@ router.get("/getOrganisations/:id", async (req, res) => {
 		});
 		res.json(organisations);
 	} catch (err) {
-		throw err;
+		res.json({ message: "Something went wrong" });
 	}
 });
 router.get("/getOrganisation/:id", async (req, res) => {
@@ -69,7 +84,7 @@ router.get("/getOrganisation/:id", async (req, res) => {
 		});
 		res.json(organisation);
 	} catch (err) {
-		throw err;
+		res.json({ message: "Something went wrong" });
 	}
 });
 router.get("/checkIsAdmin/:userId/:orgId", async (req, res) => {
@@ -82,7 +97,7 @@ router.get("/checkIsAdmin/:userId/:orgId", async (req, res) => {
 		});
 		res.json(isAdmin);
 	} catch (err) {
-		throw err;
+		res.json({ message: "Something went wrong" });
 	}
 });
 router.get("/getUsers", async (req, res) => {
@@ -92,13 +107,13 @@ router.get("/getUsers", async (req, res) => {
 		});
 		res.json(users);
 	} catch (err) {
-		throw err;
+		res.json({ message: "Something went wrong" });
 	}
 });
-router.post("/addUser/:userId/:orgId", async (req, res) => {
+router.post("/addUser/:userId/:orgId", isUserAdmin, async (req, res) => {
 	const userId = req.params.userId;
 	const orgId = req.params.orgId;
-
+	console.log("Wapas aagaya");
 	try {
 		const newRelation = await Relation.create({
 			user_id: userId,
@@ -107,7 +122,7 @@ router.post("/addUser/:userId/:orgId", async (req, res) => {
 		});
 		res.json(newRelation);
 	} catch (err) {
-		throw err;
+		res.json({ message: "Something went wrong" });
 	}
 });
 router.get("/getUserList/:orgId", async (req, res) => {
@@ -127,7 +142,7 @@ router.get("/getUserList/:orgId", async (req, res) => {
 		});
 		res.json(userList);
 	} catch (err) {
-		throw err;
+		res.json({ message: "Something went wrong" });
 	}
 });
 router.patch("/makeAdmin/:userId/:orgId", async (req, res) => {
@@ -145,7 +160,7 @@ router.patch("/makeAdmin/:userId/:orgId", async (req, res) => {
 		);
 		res.json(updateRelation);
 	} catch (err) {
-		throw err;
+		res.json({ message: "Something went wrong" });
 	}
 });
 router.patch("/removeAdmin/:userId/:orgId", async (req, res) => {
@@ -164,7 +179,7 @@ router.patch("/removeAdmin/:userId/:orgId", async (req, res) => {
 
 		res.json(updateRelation);
 	} catch (err) {
-		throw err;
+		res.json({ message: "Something went wrong" });
 	}
 });
 router.delete("/deleteUser/:userId/:orgId", async (req, res) => {
@@ -177,9 +192,9 @@ router.delete("/deleteUser/:userId/:orgId", async (req, res) => {
 				org_id: orgId,
 			},
 		});
-		res.send("ok");
+		res.json({ ok: "ok" });
 	} catch (err) {
-		throw err;
+		res.json({ message: "Something went wrong" });
 	}
 });
 module.exports = router;
