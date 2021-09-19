@@ -9,6 +9,7 @@ If you have the required NodeJs version (above 14), then just do the following s
 4. In the first terminal, type `npm start` to run react server.
 5. In second terminal, type `npm run server` to run the backend server.
 6. Now the app should be running up in `localhost:3000`  
+7. Create a DB named 'authy' for the project. 
 
 ## TechStack  
 ### 1. Frontend- ReactJS and Tailwind CSS
